@@ -1,0 +1,117 @@
+<RootWidget>: # a Rule that keeps record of all the screens of the app
+    LoginScreen:
+        name:"login_screen"
+    SignUpScreen:
+        name:"sign_up_screen"
+    SignUpSuccessScreen:
+        name:"sign_up_success_screen"
+    LoginSuccessScreen:
+        name:"login_success_screen" #app content screen
+
+
+<LoginScreen>: #not defined in kivy. need to defin by writing a class in main.py
+    GridLayout:
+        cols:1
+        GridLayout:
+            cols:1
+            padding:15,15 #space between this GridLayouts and the bigger GridLayout (outside)
+            spacing:20,20 #space between widgets (inside)
+            Label:
+                text:"User Login"
+                font_size: "20sp" #sp = space-independent pixels
+            TextInput:
+                hint_text:"Username"
+                id: username
+            TextInput:
+                hint_text:"Password"
+                password: True
+                id: password
+            RelativeLayout: # to make Button less wide than automatically assigned
+                Button:
+                    text:"Login"
+                    on_press: root.login(root.ids.username.text,root.ids.password.text)
+                    size_hint: 0.3,  0.5 # how much out of 1 does this get from its relativeLayout. Horizental first, then vertical
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6} # set a relative position of this button
+            Label:
+                id:login_wrong
+                text:""
+        GridLayout:
+            cols:2
+            size_hint: 0.2, 0.2  #set this GridLayout 20% of its parent GridLayout
+            padding: 10, 10
+            spacing: 10, 10
+            Button:
+                text:"Forgot Password?"
+
+                color: 0.1, 0.7, 1, 1 # red,green,blue, opacity (1 is completely opaque)
+                opacity: 1 if self.state == "normal" else 0.5 # self refers to this Button, if use self.parent, it refers to this GridLayout
+                background_color: 1,1,1,0 # red,green,blue, opacity (0 is completely transparent)
+                
+                
+            Button: 
+                text:"Sign up"
+                on_press: root.sign_up()  #root is the LoginScreen class in main.py and here
+
+                color: 0.1, 0.7, 1, 1 # red,green,blue, opacity (1 is completely opaque)
+                opacity: 1 if self.state == "normal" else 0.5 # self refers to this Button, if use self.parent, it refers to this GridLayout
+                background_color: 1,1,1,0 # red,green,blue, opacity (0 is completely transparent)
+
+<SignUpScreen>:
+    GridLayout:
+        cols:1
+        padding: 20, 20
+        spacing: 20, 20
+        Label:
+            text:"Sign up for a space journey!"
+        TextInput:
+            hint_text:"Userame"
+            id:username  #give it an id to refer to it later 
+        TextInput:
+            hint_text: "Password"
+            id:password
+        Button:
+            text:"Submit"
+            on_press: root.add_user(root.ids.username.text,root.ids.password.text)  #root is the SignUp class in main.py and here #ids is a method of class Screen, from which SignUpScreen inherit。
+
+            
+<SignUpSuccessScreen>:
+    GridLayout:
+        cols:1
+        padding: 30, 30
+        spacing: 30, 30
+        Label:
+            text:" Now enjoy the app!"
+        Button:
+            text:"Sign in"
+            on_press: root.go_to_login() #run def go_to_login() in main.py's class SignUpSuccessScreen
+
+
+
+
+<LoginSuccessScreen>:
+    GridLayout:
+        cols:1
+        padding: 30, 30
+        spacing: 30, 30
+        ImageButton:  #no loger use Button because we want it to be a hoverable button with images. It is defined in class ImageButton in main.py
+            #text:"Log out"  no longer used because we replace the text with image below
+            on_press: root.log_out()
+            source: 'logout_hover.png' if self.hovered else 'logout_nothover.png' # get image from directory
+
+        Label:
+            text: "How do you feel?"
+        TextInput:
+            id:feeling
+            hint_text:"Things to try: happy, sad, unloved..."
+        Button:
+            text: "Enlighten me"
+            on_press: root.show_one_quote(root.ids.feeling.text)
+        
+        ScrollView:
+            Label:
+                id:quote
+                text:""
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1] 
+
